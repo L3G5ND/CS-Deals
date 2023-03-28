@@ -1,6 +1,6 @@
 import { Waxpeer, TradeWebsocket, WebsiteWebsocket } from "waxpeer"
 
-import settings from "../settings.js"
+import settings from "../config/settings.js"
 import buff from "./api/Buff.js"
 import TaskScheduler from "./util/TaskScheduler.js"
 import { Waxpeer as WaxpeerDealsCache } from "../models/DealsCache.js"

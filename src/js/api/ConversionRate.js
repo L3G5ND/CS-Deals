@@ -1,7 +1,7 @@
 import axios from "axios"
 
 import conversionRateModel from "../../models/ConversionRate.js"
-import settings from "../../settings.js"
+import settings from "../../config/settings.js"
 
 const APIUrl = "https://api.currencyapi.com/"
 
