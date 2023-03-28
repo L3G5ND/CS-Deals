@@ -1,0 +1,31 @@
+#item-container {
+    margin: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    grid-template-rows: repeat(4, 320px);
+    grid-auto-flow: row;
+    grid-gap: 9px;
+}
+
+.item-cards {
+    background: rgb(29, 29, 29);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.item-card-text {
+    color: rgb(255, 255, 255);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    white-space: nowrap;
+}
+
+@media screen and (max-width: 400px) {
+    #item-container {
+        grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+        grid-template-rows: repeat(4, 490px);
+    }
+    .item-cards {
+        margin: 0px 20px;
+        max-width: 407px;
+    }
+}
