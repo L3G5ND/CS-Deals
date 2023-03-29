@@ -1,14 +1,14 @@
-.background {
-    position: fixed;
-    float: none;
-    z-index: -1;
-    height: 100%;
-    width:100vw;
-    background: rgb(22, 22, 22);
+:root {
+    font-size: 62.5%;
+}
+
+html {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 body {
-    background-color: transparent;
+    font-size: 1.6rem;
+    background-color: rgb(22, 22, 22);
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
@@ -17,8 +17,11 @@ body::-webkit-scrollbar {
     display: none;
 }
 
-.center-elements {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.background {
+    position: fixed;
+    z-index: -1;
+    height: 100%;
+    width: 100%;
+    background: rgb(22, 22, 22);
 }
+

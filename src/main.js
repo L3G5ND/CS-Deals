@@ -2,19 +2,21 @@ import express from 'express'
 import mongoose from 'mongoose'
 import fs from 'fs'
 
-import settings from "./settings.js"
+import settings from "./config/settings.js"
 
 const app = express()
 
-app.use(express.static("./public"))
+app.use(express.static("./src/public"))
 
-import sniperRouter from "./routes/sniper.js"
-import homeRouter from "./routes/home.js"
-import profileRouter from "./routes/profile.js"
+import apiRoute from "./routes/api.js"
+import sniperRoute from "./routes/sniper.js"
+import homeRoute from "./routes/home.js"
+import profileRoute from "./routes/profile.js"
 
-app.use('/sniper', sniperRouter)
-app.use('/home', homeRouter)
-app.use('/profile', profileRouter)
+app.use('/api', apiRoute)
+app.use('/sniper', sniperRoute)
+app.use('/home', homeRoute)
+app.use('/profile', profileRoute)
 
 app.get('/', (req, res) => {
     res.redirect('/home')
@@ -36,7 +38,7 @@ async function connectMongoose() {
 }
 await connectMongoose()
 
-fs.readdir("./js", function(error, files) {
+fs.readdir("./src/js", function(error, files) {
     for (let i = 0; i < files.length; i++) {
         if (settings.scripts.includes(files[i])) {
             let filePath = "./js/"+files[i]

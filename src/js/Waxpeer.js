@@ -3,28 +3,11 @@ import { Waxpeer, TradeWebsocket, WebsiteWebsocket } from "waxpeer"
 import settings from "../config/settings.js"
 import buff from "./api/Buff.js"
 import TaskScheduler from "./util/TaskScheduler.js"
-import { Waxpeer as WaxpeerDealsCache } from "../models/DealsCache.js"
+import ItemCache from "./ItemCache.js"
 
 const WS = new WebsiteWebsocket(settings.secret.WaxpeerAPIKey, ['add_item', 'remove', 'update_item'])
 
-const cacheTaskScheduler = new TaskScheduler()
 const waxpeerTaskSceduler = new TaskScheduler({ maxTasks: 2, taskDelay: 1})
-
-async function addToCache(data) {
-    const sortedCache = await WaxpeerDealsCache.find({}).sort({createdAt: 'descending'})
-
-    if (sortedCache.length >= settings.maxCache) {
-        for (let i = settings.maxCache-1; i < sortedCache.length; i++) {
-            await WaxpeerDealsCache.findByIdAndDelete(sortedCache[i].id)
-        }
-    }
-
-    const dealsCache = new WaxpeerDealsCache({
-        name: data.name,
-        price: data.price
-    })
-    await dealsCache.save()
-}
 
 async function onItemAdded(item) {
     item.price = item.price/1000
@@ -36,7 +19,7 @@ async function onItemAdded(item) {
 
     console.log("\n"+item.name+"\nBuff Buy Price: "+buyPrice+"\nBuff Sell Price: "+sellPrice+"\nWaxpeer Sell Price: "+item.price+"\n"+item.price/buyPrice+"% Buff Price\n")
 
-    cacheTaskScheduler.addTask(addToCache, {
+    ItemCache.addToDealsCache({
         name: item.name,
         price: item.price
     })

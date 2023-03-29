@@ -2,7 +2,7 @@
   "name": "csgo-sniper",
   "version": "1.0.0",
   "description": "Snipe CSGO deals",
-  "main": "main.js",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
     "nodemon": "nodemon main.js"

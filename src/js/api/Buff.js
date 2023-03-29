@@ -19,13 +19,14 @@ export default {
                 use_suggestion: 0,
             },
             headers: {
-                Cookie: "session=1-rjUAZe7k4sRwcxq_n3U0P072g3cAQmF3c6Yy7T6RPyn42033610679;"
+                Cookie: "session=1-Cpd9QZkxBF0r8tGeGBetfj6QQzG2B5xIJo2TwW1yIN_X2033610679;"
             }
         })
         if (result.status != 200) {
             return false
         }
 
+        console.log(result.data)
         const data = result.data.data.items
         for (let i = 0; i < data.length; i++) {
             let item = data[i]
