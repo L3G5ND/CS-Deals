@@ -10,7 +10,6 @@ router.get('/item-cache', async (req, res) => {
         req.query.market = 'all'
     }
     const cache = await ItemCache.getCache(req.query.market)
-    console.log(cache)
     res.json(cache)
 })
 

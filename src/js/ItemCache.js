@@ -8,10 +8,14 @@ async function addCache(data) {
     }
 
     const sortedCache = await cacheModel.find({}).sort({createdAt: 'descending'})
+    const deletedIds = []
     if (sortedCache.length >= settings.maxCache) {
         for (let i = settings.maxCache-1; i < sortedCache.length; i++) {
-            await cacheModel.findByIdAndDelete(sortedCache[i].id)
+            deletedIds.push(sortedCache[i].id)
         }
+    }
+    if (sortedCache[0]) {
+        await cacheModel.deleteMany({_id: {$in: deletedIds}})
     }
 
     const cacheDocument = new cacheModel({ info: data.info })

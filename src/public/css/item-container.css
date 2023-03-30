@@ -46,6 +46,11 @@
 
 .item-card-float-container {
     margin-top: 6px;
+    height: calc(1.7rem + 10px);
+}
+
+.item-card-float-info {
+    height: 1.7rem;
 }
 
 .item-card-float-abbreviation {

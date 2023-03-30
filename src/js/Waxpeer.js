@@ -35,6 +35,7 @@ WS.on('add_item', async (item) => {
     if (item.game != 'csgo') {
         return
     }
+    console.log(item.name)
     waxpeerTaskSceduler.addTask(onItemAdded, item)
 })
 WS.on('remove', (message) => {

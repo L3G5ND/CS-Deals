@@ -15,6 +15,20 @@ const itemCategories = [
     'Viewer Pass'
 ]
 
+const itemTags = {
+    '★': '#ff3e3e', 
+    'StatTrak™': '#dbbc16',
+    'Souvenir': '#881acd'
+}
+
+function getTagColor(tag) {
+    for (const key in itemTags) {
+        if (key == tag) {
+            return itemTags[key]
+        }
+    }
+}
+
 function floatToAbbreviation(float) {
     if (float <= .07) {
         return 'FN'
@@ -45,11 +59,30 @@ function abbreviationToFloat(float) {
 
 function createCard(itemInfo) {
     $.get('../html/item-card.html', function(itemCardData) {
+        itemCard = $(itemCardData)
+        itemCard.find('.item-card-price').text('$'+itemInfo.price.toFixed(2))
+        itemCard.find('.item-card-deal').text(Math.floor(((itemInfo.buffPrice/itemInfo.price)-1)*100)+'%')
+        itemCard.find('.item-card-image').attr('src', itemInfo.image)
+        if (itemInfo.stickerType) {
+            itemCard.find('.item-card-type').text(itemInfo.stickerType + itemInfo.itemType)
+        } else if (itemInfo.tag) {
+            itemCard.find('.item-card-type').css('color', getTagColor(itemInfo.tag))
+            itemCard.find('.item-card-type').text(itemInfo.tag + itemInfo.itemType)
+        } else {
+            itemCard.find('.item-card-type').text(itemInfo.itemType)
+        }
+        itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100%)')
+        itemCard.find('.item-card-copy-name-to-clipboard').click(function() {
+            navigator.clipboard.writeText(itemInfo.hashName)
+        })
+        itemCard.find('.item-card-buff-link').attr('href', itemInfo.buffLink)
+        itemCard.find('.item-card-buff-price').text('$'+itemInfo.buffPrice)
+        itemCard.find('.item-card-steam-link').attr('href', itemInfo.steamLink)
+        itemCard.find('.item-card-steam-price').text('$'+itemInfo.steamPrice)
+        itemCard.find('.item-card-price-empire-link').attr('href', itemInfo.priceEmpireLink)
+        itemCard.find('.item-card-price-empire-price').text('$'+itemInfo.priceEmpirePrice)    
+
         if (itemInfo.category == 'Weapon') {
-            itemCard = $(itemCardData)
-            itemCard.find('.item-card-price').text('$'+itemInfo.price.toFixed(2))
-            itemCard.find('.item-card-deal').text(Math.floor(((itemInfo.buffPrice/itemInfo.price)-1)*100)+'%')
-            itemCard.find('.item-card-image').attr('src', itemInfo.image)
             if (typeof(itemInfo.float) == 'string') {
                 itemCard.find('.item-card-float-abbreviation').text(itemInfo.float)
                 itemCard.find('.item-card-float').text('???')
@@ -60,18 +93,20 @@ function createCard(itemInfo) {
                 itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100% - '+itemInfo.float*100+'%)')
             } 
             itemCard.find('.item-card-name').text(itemInfo.name)
-            itemCard.find('.item-card-type').text(itemInfo.itemType)
-            itemCard.find('.item-card-copy-name-to-clipboard').click(function() {
-                navigator.clipboard.writeText(itemInfo.hashName)
-            })  
-            itemCard.find('.item-card-buff-link').attr('href', itemInfo.buffLink)
-            itemCard.find('.item-card-buff-price').text('$'+itemInfo.buffPrice)
-            itemCard.find('.item-card-steam-link').attr('href', itemInfo.steamLink)
-            itemCard.find('.item-card-steam-price').text('$'+itemInfo.steamPrice)
-            itemCard.find('.item-card-price-empire-link').attr('href', itemInfo.priceEmpireLink)
-            itemCard.find('.item-card-price-empire-price').text('$'+itemInfo.priceEmpirePrice)
-            $('#item-container').append(itemCard)
+        } else if (itemInfo.category == 'Sticker' || itemInfo.category == 'Graffiti' || itemInfo.category == 'Patch') {
+            if (itemInfo.stickerType) {
+                itemCard.find('.item-card-float').text(itemInfo.stickerType)
+            }
+            if (itemInfo.event) {
+                itemCard.find('.item-card-name').text(itemInfo.name + ' | ' + itemInfo.event)
+            } else {
+                itemCard.find('.item-card-name').text(itemInfo.name)
+            }
+        } else {
+            itemCard.find('.item-card-name').text(itemInfo.name)
         }
+        
+        $('#item-container').append(itemCard)
     })
 }
 
@@ -81,10 +116,10 @@ $(document).ready(async function() {
         url: 'api/item-cache?market=waxpeer'
     })
     console.log(cache)
-    for (let i = 0; i < 30; i++) {
+    console.log(Object.keys(cache).length)
+    for (let i = 0; i < Object.keys(cache).length; i++) {
         const itemCache = cache[i]
         createCard({
-            ...itemCache,
             ...{
                 buffPrice: 70,
                 steamPrice: 120,
@@ -93,7 +128,8 @@ $(document).ready(async function() {
                 steamLink: 'b',
                 priceEmpireLink: 'c',
                 image: 'https://steamcommunity-a.akamaihd.net/economy/image/class/730/1309991239/200fx125f',
-            }
+            },
+            ...itemCache
         })
     }
 })

@@ -30,7 +30,7 @@ const qualityAbbreviations = {
     'Minimal Wear': 'MW',
     'Field-Tested': 'FT',
     'Well-Worn': 'WW',
-    'Battle-Scared': 'BS',
+    'Battle-Scarred': 'BS',
 }
 
 function getItemCategory(hashName) {
@@ -62,7 +62,7 @@ function getItemType(hashName) {
         const tag = getItemTag(hashName)
         const pipePos = hashName.indexOf('|')
         if (pipePos) {
-            return hashName.substring(tag.length+1, pipePos-1)
+            return hashName.substring(tag.length, pipePos-1)
         }
     } else {
         return itemCategory
@@ -87,8 +87,14 @@ function getItemName(hashName) {
             return hashName.substring(searchStart, hashName.indexOf('(')-1)
         }
     } else if (itemCategory == 'Graffiti') {
+        const event = getEvent(hashName)
         const searchStart = hashName.indexOf('|')+2
-        return hashName.substring(searchStart, hashName.indexOf('|', searchStart)-1)
+        if (event) {
+            return hashName.substring(searchStart, hashName.indexOf('|', searchStart)-1)
+        } else {
+            return hashName.substring(searchStart)
+        }
+        
     } else if (itemCategory == 'Music Kit') {
         return hashName.substring(hashName.indexOf('|')+2)
     } else if (itemCategory == 'Patch') {

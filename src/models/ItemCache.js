@@ -8,6 +8,10 @@ const ItemCacheSchema = new Schema({
     }
 }, { timestamps: true })
 
+ItemCacheSchema.virtual('createdAtMs').get(function() {
+    return this.createdAt.getTime()
+})
+
 export default {
     all: mongoose.model('AllItemCache', ItemCacheSchema),
     waxpeer: mongoose.model('WaxpeerItemCache', ItemCacheSchema),
