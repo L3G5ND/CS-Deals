@@ -1,21 +1,17 @@
 import fs from 'fs'
 import express from 'express'
+
+import ItemCache from '../js/ItemCache.js'
+
 const router = express.Router()
 
-router.get('/item-deals-cache', (req, res) => {
-    console.log(req.query.market)
+router.get('/item-cache', async (req, res) => {
     if (!req.query.market) {
         req.query.market = 'all'
     }
-    res.send(req.query.market)
-})
-
-router.get('/item-cache', (req, res) => {
-    console.log(req.query.market)
-    if (!req.query.market) {
-        req.query.market = 'all'
-    }
-    res.send(req.query.market)
+    const cache = await ItemCache.getCache(req.query.market)
+    console.log(cache)
+    res.json(cache)
 })
 
 export default router

@@ -1,32 +1,48 @@
-import TaskScheduler from "./util/TaskScheduler.js"
-import { Waxpeer as WaxpeerDealsCache } from "../models/DealsCache.js"
+import ItemCache from "../models/ItemCache.js"
+import settings from '../config/settings.js'
 
-const cacheTaskScheduler = new TaskScheduler()
+async function addCache(data) {
+    const cacheModel = ItemCache[Object.keys(ItemCache).find((key) => key.toLowerCase() === data.market.toLowerCase())]
+    if (!cacheModel) {
+        return false
+    }
 
-async function addToCache(data) {
-    const sortedCache = await WaxpeerDealsCache.find({}).sort({createdAt: 'descending'})
-
+    const sortedCache = await cacheModel.find({}).sort({createdAt: 'descending'})
     if (sortedCache.length >= settings.maxCache) {
         for (let i = settings.maxCache-1; i < sortedCache.length; i++) {
-            await WaxpeerDealsCache.findByIdAndDelete(sortedCache[i].id)
+            await cacheModel.findByIdAndDelete(sortedCache[i].id)
         }
     }
 
-    const dealsCache = new WaxpeerDealsCache({
-        name: data.name,
-        price: data.price
-    })
-    await dealsCache.save()
+    const cacheDocument = new cacheModel({ info: data.info })
+    await cacheDocument.save()
+
+    return true
+}
+
+async function getCache(market) {
+    const cacheModel = ItemCache[Object.keys(ItemCache).find((key) => key.toLowerCase() === market.toLowerCase())]
+    if (!cacheModel) {
+        return false
+    }
+
+    const sortedCache = await cacheModel.find({}).sort({createdAt: 'descending'})
+    const itemCache = {}
+
+    for (let i = 0; i < sortedCache.length; i++) {
+        itemCache[i] = sortedCache[i].info
+    }
+
+    return itemCache
 }
 
 export default {
-    addToDealsCache: function(data) {
-        data.cacheType = 'deals'
-        cacheTaskScheduler.addTask(addToCache(data))
-        
+    addCache: async function(data) {
+        const res = await addCache(data)
+        await addCache({ market: 'all', info: data.info })
+        return res
     },
-    addToCache: function(data) {
-        data.cacheType = 'items'
-        cacheTaskScheduler.addTask(addToCache(data))
-    }
+    getCache: async function(market) {
+        return await getCache(market)
+    },
 }

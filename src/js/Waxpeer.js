@@ -1,27 +1,33 @@
 import { Waxpeer, TradeWebsocket, WebsiteWebsocket } from "waxpeer"
 
 import settings from "../config/settings.js"
-import buff from "./api/Buff.js"
 import TaskScheduler from "./util/TaskScheduler.js"
-import ItemCache from "./ItemCache.js"
+import Item from "./Item.js"
 
+const WP = new Waxpeer(settings.secret.WaxpeerAPIKey)
 const WS = new WebsiteWebsocket(settings.secret.WaxpeerAPIKey, ['add_item', 'remove', 'update_item'])
 
 const waxpeerTaskSceduler = new TaskScheduler({ maxTasks: 2, taskDelay: 1})
 
 async function onItemAdded(item) {
-    item.price = item.price/1000
-    console.log(item)
-
-    let buffItemId = await buff.getItemIdFromName(item.name)
-    let sellPrice = await buff.getSellPrice(buffItemId)
-    let buyPrice = await buff.getBuyPrice(buffItemId)
-
-    console.log("\n"+item.name+"\nBuff Buy Price: "+buyPrice+"\nBuff Sell Price: "+sellPrice+"\nWaxpeer Sell Price: "+item.price+"\n"+item.price/buyPrice+"% Buff Price\n")
-
-    ItemCache.addToDealsCache({
+    const itemList = await WP.getItemsList(0, item.name)
+    let extraInfo
+    for (let i = 0; i < itemList.items.length; i++) {
+        if (itemList.items[i].item_id == item.item_id) {
+            extraInfo = itemList.items[i]
+        }
+    }
+    if (!extraInfo) {
+        return
+    }
+    Item.createItem({
+        market: 'waxpeer',
         name: item.name,
-        price: item.price
+        price: item.price/1000,
+        float: extraInfo.float,
+        phase: extraInfo.phase,
+        id: item.item_id,
+        image: item.image
     })
 }
 
@@ -29,7 +35,6 @@ WS.on('add_item', async (item) => {
     if (item.game != 'csgo') {
         return
     }
-    console.log(item.name)
     waxpeerTaskSceduler.addTask(onItemAdded, item)
 })
 WS.on('remove', (message) => {

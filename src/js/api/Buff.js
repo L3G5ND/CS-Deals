@@ -25,8 +25,7 @@ export default {
         if (result.status != 200) {
             return false
         }
-
-        console.log(result.data)
+        
         const data = result.data.data.items
         for (let i = 0; i < data.length; i++) {
             let item = data[i]
