@@ -10,13 +10,14 @@ const cdn = new csgoCDN(steamClient, { directory: 'csgo-downloads', logLevel: 'e
 await waitFor('ready', cdn);
 
 const itemCategories = [
+    'Case',
     'Weapon',
     'Gloves',
     'Key',
-    'Case',
     'Sticker Capsule',
     'Sticker',
     'Graffiti',
+    'Graffiti Box',
     'Music Kit',
     'Patch Pack',
     'Patch',
@@ -26,6 +27,7 @@ const itemCategories = [
     'Swap Tool',
     'Souvenir Package',
     'Viewer Pass',
+    'Character',
 ]
 
 const itemTags = ['★', 'StatTrak™', 'Souvenir']
@@ -105,7 +107,11 @@ function getItemType(hashName) {
         const tag = getItemTag(hashName)
         const pipePos = hashName.indexOf('|')
         if (pipePos) {
-            return hashName.substring(tag.length, pipePos-1)
+            if (tag) {
+                return hashName.substring(tag.length+1, pipePos-1)
+            } else {
+                return hashName.substring(0, pipePos-1)
+            }
         }
     } else {
         return itemCategory
@@ -155,7 +161,8 @@ function getItemName(hashName) {
 }
 
 function getImage(hashName, phase) {
-    return cdn.getItemNameURL(hashName)
+    const cdnPhase = cdn.phase[phase]
+    return cdn.getItemNameURL(hashName, cdnPhase)
 }
 
 function getStickerType(hashName) {

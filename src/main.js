@@ -1,5 +1,6 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import http from 'http'
 import fs from 'fs'
 
 import settings from "./config/settings.js"
@@ -11,16 +12,19 @@ try {
 }
 
 const app = express()
+const server = http.createServer(app)
 
 app.use(express.static("./src/public"))
 
 const apiRoute = await import("./routes/api.js")
-const sniperRoute = await import("./routes/sniper.js")
+const dealsRoute = await import("./routes/deals.js")
+const activityRoute = await import("./routes/activity.js")
 const homeRoute = await import("./routes/home.js")
 const profileRoute = await import("./routes/profile.js")
 
 app.use('/api', apiRoute.default)
-app.use('/sniper', sniperRoute.default)
+app.use('/deals', dealsRoute.default)
+app.use('/activity', activityRoute.default)
 app.use('/home', homeRoute.default)
 app.use('/profile', profileRoute.default)
 
@@ -28,7 +32,10 @@ app.get('/', (req, res) => {
     res.redirect('/home')
 })
 
-app.listen(settings.port, settings.host, (error) => {
+import ItemWebsocket from "./js/websocket/ItemWebsocket.js"
+ItemWebsocket.init(server)
+
+server.listen(settings.port, settings.host, (error) => {
     if (error) {
         console.log(error)
     }
@@ -41,7 +48,7 @@ fs.readdir("./src/js", function(error, files) {
             let filePath = "./js/"+files[i]
             new Promise(() => {
                 import(filePath)
-            })   
+            })
         }
     }
 })

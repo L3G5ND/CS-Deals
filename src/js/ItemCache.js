@@ -30,7 +30,7 @@ async function getCache(market) {
         return false
     }
 
-    const sortedCache = await cacheModel.find({}).sort({createdAt: 'descending'})
+    const sortedCache = await cacheModel.find({})
     const itemCache = {}
 
     for (let i = 0; i < sortedCache.length; i++) {

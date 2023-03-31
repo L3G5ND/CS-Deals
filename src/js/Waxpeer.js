@@ -26,8 +26,8 @@ async function onItemAdded(item) {
         price: item.price/1000,
         float: extraInfo.float,
         phase: extraInfo.phase,
-        id: item.item_id,
-        image: item.image
+        image: item.image,
+        link: 'https://waxpeer.com/market/item/'+item.item_id,
     })
 }
 
@@ -35,12 +35,5 @@ WS.on('add_item', async (item) => {
     if (item.game != 'csgo') {
         return
     }
-    console.log(item.name)
     waxpeerTaskSceduler.addTask(onItemAdded, item)
-})
-WS.on('remove', (message) => {
-    
-})
-WS.on('update_item', (message) => {
-    
 })
