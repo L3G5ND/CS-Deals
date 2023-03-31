@@ -1,7 +1,6 @@
-import fs from 'fs'
 import express from 'express'
 
-import ItemCache from '../js/ItemCache.js'
+import item from '../js/Item.js'
 
 const router = express.Router()
 
@@ -9,8 +8,7 @@ router.get('/item-cache', async (req, res) => {
     if (!req.query.market) {
         req.query.market = 'all'
     }
-    const cache = await ItemCache.getCache(req.query.market)
-    res.json(cache)
+    res.json(await item.getItems(req.query.market))
 })
 
 export default router

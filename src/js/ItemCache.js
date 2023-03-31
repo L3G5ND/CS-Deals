@@ -41,12 +41,15 @@ async function getCache(market) {
 }
 
 export default {
+
     addCache: async function(data) {
         const res = await addCache(data)
         await addCache({ market: 'all', info: data.info })
         return res
     },
+
     getCache: async function(market) {
         return await getCache(market)
     },
+    
 }

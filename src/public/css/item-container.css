@@ -119,8 +119,9 @@
 
 .item-card-name {
     color: rgb(236, 236, 236);
-    text-align: center;
-    font-size: 1.8rem;
+    white-space: wrap;
+    width: 85%;
+    font-size: 1.7rem;
 }
 
 .item-card-copy-name-to-clipboard {
@@ -140,11 +141,12 @@
 }
 
 .item-card-market-price-container {
-    margin-top: 6px;
-    height: 104px;
     display: flex;
-    justify-content: space-evenly;
     flex-direction: column;
+    position: absolute;
+    width: calc(100% - 24px);
+    bottom: calc(12px + 4rem + 2px);
+    padding-bottom: 5px;
 }
 
 .item-card-market-price-info-container {
@@ -164,9 +166,29 @@
     margin-right: 8px;
 }
 
+.item-card-links {
+    width: calc(100% - 24px);
+    position: absolute;
+    bottom: calc(12px + 4rem + 2px);
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.item-card-links a {
+    padding: 0px 5px;
+    height: 23px;
+    width: 23px;
+}
+
+.item-card-links a img {
+    height: 23px;
+    width: 23px;
+}
+
 .item-card-footer {
     width: calc(100% - 24px);
-    position: absolute; 
+    position: absolute;
     bottom: 12px;
     display: flex;
 }

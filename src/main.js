@@ -4,19 +4,25 @@ import fs from 'fs'
 
 import settings from "./config/settings.js"
 
+try {
+    await mongoose.connect(settings.secret.MongooseUri)
+} catch(error) {
+    console.log('[ERROR] - ' + error)
+}
+
 const app = express()
 
 app.use(express.static("./src/public"))
 
-import apiRoute from "./routes/api.js"
-import sniperRoute from "./routes/sniper.js"
-import homeRoute from "./routes/home.js"
-import profileRoute from "./routes/profile.js"
+const apiRoute = await import("./routes/api.js")
+const sniperRoute = await import("./routes/sniper.js")
+const homeRoute = await import("./routes/home.js")
+const profileRoute = await import("./routes/profile.js")
 
-app.use('/api', apiRoute)
-app.use('/sniper', sniperRoute)
-app.use('/home', homeRoute)
-app.use('/profile', profileRoute)
+app.use('/api', apiRoute.default)
+app.use('/sniper', sniperRoute.default)
+app.use('/home', homeRoute.default)
+app.use('/profile', profileRoute.default)
 
 app.get('/', (req, res) => {
     res.redirect('/home')
@@ -28,15 +34,6 @@ app.listen(settings.port, settings.host, (error) => {
     }
     console.log('Server succesfully started at: http://'+settings.host+':'+settings.port)
 })
-
-async function connectMongoose() {
-    try {
-        await mongoose.connect(settings.secret.MongooseUri)
-    } catch(error) {
-        console.log('[ERROR] - ' + error)
-    }
-}
-await connectMongoose()
 
 fs.readdir("./src/js", function(error, files) {
     for (let i = 0; i < files.length; i++) {

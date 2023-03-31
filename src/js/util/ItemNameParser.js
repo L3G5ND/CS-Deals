@@ -1,5 +1,17 @@
+import SteamUser from 'steam-user'
+import csgoCDN from 'csgo-cdn'
+import {waitFor} from 'wait-for-event'
+
+const steamClient = new SteamUser()
+steamClient.logOn({ anonymous: true })
+
+const cdn = new csgoCDN(steamClient, { directory: 'csgo-downloads', logLevel: 'error' });
+
+await waitFor('ready', cdn);
+
 const itemCategories = [
     'Weapon',
+    'Gloves',
     'Key',
     'Case',
     'Sticker Capsule',
@@ -12,7 +24,8 @@ const itemCategories = [
     'Name Tag',
     'Storage Unit',
     'Swap Tool',
-    'Viewer Pass'
+    'Souvenir Package',
+    'Viewer Pass',
 ]
 
 const itemTags = ['★', 'StatTrak™', 'Souvenir']
@@ -22,7 +35,7 @@ const floatQualities = [
     'Minimal Wear',
     'Field-Tested',
     'Well-Worn',
-    'Battle-Scared'
+    'Battle-Scarred'
 ]
 
 const qualityAbbreviations = {
@@ -31,6 +44,36 @@ const qualityAbbreviations = {
     'Field-Tested': 'FT',
     'Well-Worn': 'WW',
     'Battle-Scarred': 'BS',
+}
+
+function qualityToAbbreviation(quality) {
+    for (const key in qualityAbbreviations) {
+        if (key == quality) {
+            return qualityAbbreviations[key]
+        }
+    }
+}
+
+function abbreviationToQuality(abbreviation) {
+    for (const key in qualityAbbreviations) {
+        if (qualityAbbreviations[key] == abbreviation) {
+            return key
+        }
+    }
+}
+
+function floatToQuality(float) {
+    if (float <= .07) {
+        return 'Factory New'
+    } else if (float <= .15) {
+        return 'Minimal Wear'
+    } else if (float <= .38) {
+        return 'Field-Tested'
+    } else if (float <= .45) {
+        return 'Well-Worn'
+    } else if (float <= 1) {
+        return 'Battle-Scarred'
+    }
 }
 
 function getItemCategory(hashName) {
@@ -58,7 +101,7 @@ function getItemTag(hashName) {
 
 function getItemType(hashName) {
     const itemCategory = getItemCategory(hashName)
-    if (itemCategory == 'Weapon') {
+    if (itemCategory == 'Weapon' || itemCategory == 'Gloves') {
         const tag = getItemTag(hashName)
         const pipePos = hashName.indexOf('|')
         if (pipePos) {
@@ -72,6 +115,8 @@ function getItemType(hashName) {
 function getItemName(hashName) {
     const itemCategory = getItemCategory(hashName)
     if (itemCategory == 'Weapon') {
+        return hashName.substring(hashName.indexOf('|')+2, hashName.indexOf('(')-1)
+    } else if (itemCategory == 'Gloves') {
         return hashName.substring(hashName.indexOf('|')+2, hashName.indexOf('(')-1)
     } else if (itemCategory == 'Sticker') {
         const stickerType = getStickerType(hashName)
@@ -109,6 +154,10 @@ function getItemName(hashName) {
     }
 }
 
+function getImage(hashName, phase) {
+    return cdn.getItemNameURL(hashName)
+}
+
 function getStickerType(hashName) {
     const itemCategory = getItemCategory(hashName)
     if (itemCategory == 'Sticker') {
@@ -122,7 +171,7 @@ function getStickerType(hashName) {
 
 function getWeaponQuality(hashName) {
     const itemCategory = getItemCategory(hashName)
-    if (itemCategory == 'Weapon') {
+    if (itemCategory == 'Weapon' || itemCategory == 'Gloves') {
         return qualityToAbbreviation(hashName.substring(hashName.indexOf('(')+1, hashName.indexOf(')')))
     }
     return null
@@ -139,26 +188,22 @@ function getEvent(hashName) {
     return null
 }
 
-function qualityToAbbreviation(quality) {
-    for (const key in qualityAbbreviations) {
-        if (key == quality) {
-            return qualityAbbreviations[key]
-        }
-    }
-}
-
 export default {
     ItemCategories: itemCategories,
     ItemTags: itemTags,
     FloatQualities: floatQualities,
     QualityAbbreviations: qualityAbbreviations,
 
+    qualityToAbbreviation: qualityToAbbreviation,
+    abbreviationToQuality: abbreviationToQuality,
+    floatToQuality: floatToQuality,
+
     getItemCategory: getItemCategory,
     getItemTag: getItemTag,
     getItemType: getItemType,
     getItemName: getItemName,
+    getImage: getImage,
     getStickerType: getStickerType,
     getWeaponQuality: getWeaponQuality,
     getEvent: getEvent,
-    qualityToAbbreviation: qualityToAbbreviation,
 }

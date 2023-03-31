@@ -1,21 +1,15 @@
 import axios from "axios"
 
-import conversionRateModel from "../../models/ConversionRate.js"
-import settings from "../../config/settings.js"
+import conversionRateModel from "../models/ConversionRates.js"
 
-const APIUrl = "https://api.currencyapi.com/"
+const url = "https://prices.csgotrader.app/latest/exchange_rates.json"
 
 async function fetchData() {
-    const url = APIUrl + "v3/latest?apikey=" + settings.secret.CurrencyAPIKey
     const result = await axios({
         method: 'get',
         url: url
     })
-    const data = result.data.data
-    for (const currency in data) {
-        data[currency] = data[currency].value
-    }
-    return data
+    return result.data
 }
 
 async function getData() {
@@ -33,19 +27,17 @@ async function getData() {
             await conversionRates.save({ timestamps: false })
         }
     }
-    return conversionRates.rates
+    return conversionRates.toObject().rates
 }
 
 export default {
 
     async getRateList() {
-        const data = await getData()
-        return data
+        return await getData()
     },
 
     async getRate(currency) {
-        const data = await getData()
-        return data[currency]
+        return (await getData())[currency]
     }
 
 }
