@@ -1,13 +1,10 @@
 import { Waxpeer, TradeWebsocket, WebsiteWebsocket } from "waxpeer"
 
-import settings from "../config/settings.js"
-import TaskScheduler from "./util/TaskScheduler.js"
+import secret from "../config/secret.js"
 import Item from "./Item.js"
 
-const WP = new Waxpeer(settings.secret.WaxpeerAPIKey)
-const WS = new WebsiteWebsocket(settings.secret.WaxpeerAPIKey, ['add_item', 'remove', 'update_item'])
-
-const waxpeerTaskSceduler = new TaskScheduler({ maxTasks: 2, taskDelay: 1})
+const WP = new Waxpeer(secret.WaxpeerAPIKey)
+const WS = new WebsiteWebsocket(secret.WaxpeerAPIKey, ['add_item', 'remove', 'update_item'])
 
 async function onItemAdded(item) {
     const itemList = await WP.getItemsList(0, item.name)
@@ -35,5 +32,7 @@ WS.on('add_item', async (item) => {
     if (item.game != 'csgo') {
         return
     }
-    waxpeerTaskSceduler.addTask(onItemAdded, item)
+    onItemAdded(item)
 })
+
+console.log('[INFO] - Waxpeer.js ran successfully')

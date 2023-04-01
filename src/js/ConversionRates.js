@@ -1,8 +1,10 @@
 import axios from "axios"
 
-import conversionRateModel from "../models/ConversionRates.js"
-
 const url = "https://prices.csgotrader.app/latest/exchange_rates.json"
+
+let cache
+let lastUpdated
+const updateInterval = 12
 
 async function fetchData() {
     const result = await axios({
@@ -13,21 +15,18 @@ async function fetchData() {
 }
 
 async function getData() {
-    let conversionRates = await conversionRateModel.findOne()
-    if (!conversionRates) {
-        let data = await fetchData()
-        conversionRates = new conversionRateModel({ rates: data })
-        await conversionRates.save()
-    } else {
-        const hourDifference = ((new Date).getTime() - conversionRates.updatedAt.getTime()) / 1000 / 60 / 60
-        if (hourDifference >= 6) {
-            let data = await fetchData()
-            conversionRates.rates = data
-            conversionRates.updatedAt = new Date
-            await conversionRates.save({ timestamps: false })
+    const now = (new Date).getTime()
+    if (cache) {
+        const hourDifference = (now - lastUpdated) / 1000 / 60 / 60
+        if (hourDifference >= updateInterval) {
+            cache = await fetchData()
+            lastUpdated = now
         }
+    } else {
+        cache = await fetchData()
+        lastUpdated = now
     }
-    return conversionRates.toObject().rates
+    return cache
 }
 
 export default {

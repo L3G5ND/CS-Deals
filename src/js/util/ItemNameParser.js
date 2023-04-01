@@ -2,12 +2,18 @@ import SteamUser from 'steam-user'
 import csgoCDN from 'csgo-cdn'
 import {waitFor} from 'wait-for-event'
 
-const steamClient = new SteamUser()
-steamClient.logOn({ anonymous: true })
+import debug from '../../config/debug.js'
 
-const cdn = new csgoCDN(steamClient, { directory: 'csgo-downloads', logLevel: 'error' });
+let cdn
+if (debug.itemImages) {
+    const steamClient = new SteamUser()
+    steamClient.logOn({ anonymous: true })
+    
+    cdn = new csgoCDN(steamClient, { directory: 'csgo-downloads', logLevel: 'error' })
+    
+    await waitFor('ready', cdn)
+}
 
-await waitFor('ready', cdn);
 
 const itemCategories = [
     'Case',
@@ -161,8 +167,11 @@ function getItemName(hashName) {
 }
 
 function getImage(hashName, phase) {
-    const cdnPhase = cdn.phase[phase]
-    return cdn.getItemNameURL(hashName, cdnPhase)
+    if (debug.itemImages) {
+        const cdnPhase = cdn.phase[phase]
+        return cdn.getItemNameURL(hashName, cdnPhase)
+    }
+    return ''
 }
 
 function getStickerType(hashName) {

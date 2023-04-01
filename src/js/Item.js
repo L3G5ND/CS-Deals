@@ -96,11 +96,22 @@ function getPriceEmpireLink(info) {
 async function addExtraInfo(info) {
     const itemPrices = await Prices.getPrices(info.hashName)
     info.buffInfo = {
-        buy: itemPrices.buff163.starting_at.price, 
-        sell: itemPrices.buff163.highest_order.price
+        buy: 0, 
+        sell: 0, 
+    }
+    const buffPrices = itemPrices.buff163
+    if (buffPrices) {
+        if (buffPrices.starting_at || buffPrices.highest_order) {
+            const buffBuy = buffPrices.starting_at.price
+            const buffSell = buffPrices.highest_order.price
+            info.buffInfo = {
+                buy: buffBuy ? buffBuy : 0, 
+                sell: buffSell ? buffSell : 0, 
+            }
+        }
     }
 
-    info.steamValue = itemPrices.steam.last_7d
+    info.steamValue = itemPrices.steam.last_7d ? itemPrices.steam.last_7d : 0
     info.steamLink = 'https://steamcommunity.com/market/listings/730/'+info.hashName
 
     info.priceEmpireLink = getPriceEmpireLink(info)

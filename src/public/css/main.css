@@ -3,10 +3,12 @@
 }
 
 html {
+    height: 100%;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 body {
+    height: 100%;
     font-size: 1.6rem;
     background-color: rgb(22, 22, 22);
     -ms-overflow-style: none;
@@ -25,3 +27,11 @@ body::-webkit-scrollbar {
     background: rgb(22, 22, 22);
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}

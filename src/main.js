@@ -4,9 +4,11 @@ import http from 'http'
 import fs from 'fs'
 
 import settings from "./config/settings.js"
+import secret from "./config/secret.js"
 
 try {
-    await mongoose.connect(settings.secret.MongooseUri)
+    await mongoose.connect(secret.MongooseUri)
+    console.log('[Info] - Mongoose Successfully connected')
 } catch(error) {
     console.log('[ERROR] - ' + error)
 }
