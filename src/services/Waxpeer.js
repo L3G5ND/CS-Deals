@@ -1,12 +1,16 @@
 import { Waxpeer, TradeWebsocket, WebsiteWebsocket } from "waxpeer"
 
-import secret from "../config/secret.js"
-import Item from "./Item.js"
+import settings from "../settings.js"
+import Item from "./modules/Item.js"
+import ItemNameParser from "./modules/ItemNameParser.js"
 
-const WP = new Waxpeer(secret.WaxpeerAPIKey)
-const WS = new WebsiteWebsocket(secret.WaxpeerAPIKey, ['add_item', 'remove', 'update_item'])
+const WP = new Waxpeer(settings.secret.waxpeerAPIKey)
+const WS = new WebsiteWebsocket(settings.secret.waxpeerAPIKey, ['add_item', 'remove', 'update_item'])
 
 async function onItemAdded(item) {
+    if (item.game != 'csgo') {
+        return
+    }
     const itemList = await WP.getItemsList(0, item.name)
     let extraInfo
     for (let i = 0; i < itemList.items.length; i++) {
@@ -23,16 +27,9 @@ async function onItemAdded(item) {
         price: item.price/1000,
         float: extraInfo.float,
         phase: extraInfo.phase,
-        image: item.image,
-        link: 'https://waxpeer.com/market/item/'+item.item_id,
+        link: 'https://waxpeer.com/'+ItemNameParser.getLinkName(item.name)+'/item/'+item.item_id,
     })
 }
 
-WS.on('add_item', async (item) => {
-    if (item.game != 'csgo') {
-        return
-    }
-    onItemAdded(item)
-})
-
-console.log('[INFO] - Waxpeer.js ran successfully')
+WS.on('add_item', onItemAdded)
+WS.on('update_item', onItemAdded)

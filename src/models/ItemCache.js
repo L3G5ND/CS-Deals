@@ -1,4 +1,7 @@
 import mongoose from 'mongoose'
+
+import settings from '../settings.js'
+
 const Schema = mongoose.Schema
 
 const ItemCacheSchema = new Schema({
@@ -12,7 +15,10 @@ ItemCacheSchema.virtual('createdAtMs').get(function() {
     return this.createdAt.getTime()
 })
 
-export default {
-    all: mongoose.model('AllItemCache', ItemCacheSchema),
-    waxpeer: mongoose.model('WaxpeerItemCache', ItemCacheSchema),
+const exports = {}
+
+for (const key in settings.markets) {
+    exports[key.toLowerCase()] = mongoose.model(key+'ItemCache', ItemCacheSchema)
 }
+
+export default exports

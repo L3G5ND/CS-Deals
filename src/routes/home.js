@@ -3,7 +3,10 @@ import express from 'express'
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    res.sendFile("views/home.html", {root: './src'})
+    res.render("home")
 })
 
-export default router
+export default {
+    router: router,
+    path: 'home'
+}

@@ -1,5 +1,5 @@
-import ItemCache from "../models/ItemCache.js"
-import settings from '../config/settings.js'
+import ItemCache from "../../models/ItemCache.js"
+import settings from '../../settings.js'
 
 async function addCache(data) {
     const cacheModel = ItemCache[Object.keys(ItemCache).find((key) => key.toLowerCase() === data.market.toLowerCase())]
@@ -31,8 +31,8 @@ async function getCache(market) {
     }
 
     const sortedCache = await cacheModel.find({})
+    
     const itemCache = {}
-
     for (let i = 0; i < sortedCache.length; i++) {
         itemCache[i] = sortedCache[i].info
     }

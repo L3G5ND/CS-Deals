@@ -1,56 +1,34 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import http from 'http'
-import fs from 'fs'
 
-import settings from "./config/settings.js"
-import secret from "./config/secret.js"
+import logger from './services/utility/logger.js'
+import settings from './settings.js'
+import RoutesBootstrap from './routes/RoutesBootstrap.js'
+import ServiceBootstrap from './services/ServiceBootstrap.js'
 
 try {
-    await mongoose.connect(secret.MongooseUri)
-    console.log('[Info] - Mongoose Successfully connected')
+    await mongoose.connect(settings.secret.mongodbUrl)
+    logger.info('Mongoose successfully connected')
 } catch(error) {
-    console.log('[ERROR] - ' + error)
+    logger.error('Mongoose failed to connect: '+error)
 }
 
 const app = express()
 const server = http.createServer(app)
 
+app.set('views', './src/views')
+app.set('view engine', 'ejs')
 app.use(express.static("./src/public"))
 
-const apiRoute = await import("./routes/api.js")
-const dealsRoute = await import("./routes/deals.js")
-const activityRoute = await import("./routes/activity.js")
-const homeRoute = await import("./routes/home.js")
-const profileRoute = await import("./routes/profile.js")
-
-app.use('/api', apiRoute.default)
-app.use('/deals', dealsRoute.default)
-app.use('/activity', activityRoute.default)
-app.use('/home', homeRoute.default)
-app.use('/profile', profileRoute.default)
-
-app.get('/', (req, res) => {
-    res.redirect('/home')
+await RoutesBootstrap(app)
+await ServiceBootstrap({
+    server: server,
 })
-
-import ItemWebsocket from "./js/websocket/ItemWebsocket.js"
-ItemWebsocket.init(server)
 
 server.listen(settings.port, settings.host, (error) => {
     if (error) {
         console.log(error)
     }
     console.log('Server succesfully started at: http://'+settings.host+':'+settings.port)
-})
-
-fs.readdir("./src/js", function(error, files) {
-    for (let i = 0; i < files.length; i++) {
-        if (settings.scripts.includes(files[i])) {
-            let filePath = "./js/"+files[i]
-            new Promise(() => {
-                import(filePath)
-            })
-        }
-    }
 })

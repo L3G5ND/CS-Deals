@@ -1,23 +1,7 @@
 import ItemCache from "./ItemCache.js"
-import ItemNameParser from "./util/ItemNameParser.js"
-import ItemWebsocket from "./websocket/ItemWebsocket.js"
+import ItemNameParser from "./ItemNameParser.js"
+import ItemWebsocket from "../ItemWebsocket.js"
 import Prices from "./Prices.js"
-
-const priceEmpireQualities = {
-    'Factory New': 'factory-new',
-    'Minimal Wear': 'minimal-wear',
-    'Field-Tested': 'field-tested',
-    'Well-Worn': 'well-worn',
-    'Battle-Scarred': 'battle-scarred',
-}
-
-function qualityToPriceEmpireQuality(quality) {
-    for (const key in priceEmpireQualities) {
-        if (key == quality) {
-            return priceEmpireQualities[key]
-        }
-    }
-}
 
 const priceEmpirePaths = {
     'Case': 'container',
@@ -26,71 +10,19 @@ const priceEmpirePaths = {
     'Key': 'key',
     'Sticker Capsule': 'sticker-capsule',
     'Sticker': 'sticker',
+    'Autograph Capsule': 'sticker-capsule',
     'Graffiti': 'graffiti',
     'Graffiti Box': 'graffiti-capsule',
     'Music Kit': 'music-kit',
-    'Patch Pack': 'skin',
-    'Patch': 'skin',
-    'Pin': 'skin',
-    'Name Tag': 'skin',
-    'Storage Unit': 'skin',
-    'Swap Tool': 'skin',
-    'Souvenir Package': 'skin',
-    'Viewer Pass': 'skin',
+    'Patch Pack': 'patch-pack',
+    'Patch': 'patch',
+    'Pin': 'pin',
+    'Name Tag': 'other',
+    'Storage Unit': 'other',
+    'Swap Tool': 'other',
+    'Souvenir Package': 'souvenir-package',
+    'Viewer Pass': 'other',
     'Character': 'agent'
-}
-
-function getPriceEmpireLink(info) {
-    const category = info.category
-    const name = info.name.replaceAll(' | ', ' ').replaceAll(',', '').replaceAll(' (', ' ').replaceAll(')', '').replaceAll('\'', '')
-    let path = ''
-    let dir = ''
-
-    for (const key in priceEmpirePaths) {
-        if (category == key) {
-            dir = priceEmpirePaths[key]
-        }
-    }
-
-    if (info.tag == 'StatTrak™') {
-        path += 'stattrak-'
-    } else if (info.tag == 'Souvenir') {
-        path += 'souvenir-'
-    }
-    
-    if (category == 'Weapon' || category == 'Gloves') {
-        path += info.itemType + '-'
-        path += name + '-'
-        let quality
-        if (typeof(info.float) == 'number') {
-            quality = ItemNameParser.floatToQuality(info.float)
-        } else if (typeof(info.float) == 'string') {
-            quality = ItemNameParser.abbreviationToQuality(info.float)
-        }
-        path += qualityToPriceEmpireQuality(quality)
-    } else if (category == 'Sticker') {
-        path += info.itemType + '-'
-        path += name
-        if (info.stickerType != 'Normal') {
-            path += '-' + info.stickerType
-        }
-        if (info.event) {
-            path += '-' + info.event
-        }
-    } else if (category == 'Graffiti') {
-        path += 'sealed-graffiti-'
-        path += name
-    } else if (category == 'Music Kit') {
-        path += info.itemType + '-'
-        path += name
-    } else if (category == 'Character') {
-        path += name
-    } else {
-        path += name
-    }
-
-    path = path.replaceAll('.', '').replaceAll(' ', '-').toLowerCase()
-    return 'https://pricempire.com/item/csgo/'+dir+'/'+path
 }
 
 async function addExtraInfo(info) {
@@ -114,7 +46,13 @@ async function addExtraInfo(info) {
     info.steamValue = itemPrices.steam.last_7d ? itemPrices.steam.last_7d : 0
     info.steamLink = 'https://steamcommunity.com/market/listings/730/'+info.hashName
 
-    info.priceEmpireLink = getPriceEmpireLink(info)
+    let path = ''
+    for (const key in priceEmpirePaths) {
+        if (info.category == key) {
+            path = priceEmpirePaths[key]
+        }
+    }
+    info.priceEmpireLink = 'https://pricempire.com/item/csgo/'+path+'/'+ItemNameParser.getLinkName(info.hashName)
 }
 
 export default {

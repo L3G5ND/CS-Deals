@@ -1,6 +1,6 @@
 import express from 'express'
 
-import item from '../js/Item.js'
+import item from '../services/modules/Item.js'
 
 const router = express.Router()
 
@@ -33,4 +33,7 @@ router.get('/deals-cache', async (req, res) => {
     res.json(dealCache)
 })
 
-export default router
+export default {
+    router: router,
+    path: 'api'
+}

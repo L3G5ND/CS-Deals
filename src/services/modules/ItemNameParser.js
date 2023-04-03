@@ -2,10 +2,10 @@ import SteamUser from 'steam-user'
 import csgoCDN from 'csgo-cdn'
 import {waitFor} from 'wait-for-event'
 
-import debug from '../../config/debug.js'
+import settings from '../../settings.js'
 
 let cdn
-if (debug.itemImages) {
+if (settings.debug.itemImages) {
     const steamClient = new SteamUser()
     steamClient.logOn({ anonymous: true })
     
@@ -22,6 +22,7 @@ const itemCategories = [
     'Key',
     'Sticker Capsule',
     'Sticker',
+    'Autograph Capsule',
     'Graffiti',
     'Graffiti Box',
     'Music Kit',
@@ -82,6 +83,13 @@ function floatToQuality(float) {
     } else if (float <= 1) {
         return 'Battle-Scarred'
     }
+}
+
+function getLinkName(hashName) {
+    hashName = hashName.replace(/[^a-zA-Z0-9- ]/g, '')
+    hashName = hashName.trim().replace(/\s+/g, '-')
+    hashName = hashName.toLowerCase()
+    return hashName
 }
 
 function getItemCategory(hashName) {
@@ -167,7 +175,7 @@ function getItemName(hashName) {
 }
 
 function getImage(hashName, phase) {
-    if (debug.itemImages) {
+    if (settings.debug.itemImages) {
         const cdnPhase = cdn.phase[phase]
         return cdn.getItemNameURL(hashName, cdnPhase)
     }
@@ -214,6 +222,7 @@ export default {
     abbreviationToQuality: abbreviationToQuality,
     floatToQuality: floatToQuality,
 
+    getLinkName: getLinkName,
     getItemCategory: getItemCategory,
     getItemTag: getItemTag,
     getItemType: getItemType,

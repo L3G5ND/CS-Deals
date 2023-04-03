@@ -2,7 +2,10 @@ import express from 'express'
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    res.sendFile("views/activity.html", {root: './src'})
+    res.render("activity")
 })
 
-export default router
+export default {
+    router: router,
+    path: 'activity'
+}

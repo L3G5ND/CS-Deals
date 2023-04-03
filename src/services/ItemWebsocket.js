@@ -5,8 +5,8 @@ const sockets = {}
 
 export default {
 
-    init(server) {
-        io = new Socket(server, {
+    init(context) {
+        io = new Socket(context.server, {
             path: '/item-socket',
             cors: {
                 origin: '*'
@@ -14,7 +14,6 @@ export default {
         })
         
         io.on('connection', (socket) => {
-            console.log(socket.id)
             sockets[socket.id] = socket
         })
     },

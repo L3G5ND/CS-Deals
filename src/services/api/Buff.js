@@ -1,6 +1,6 @@
 import axios from "axios"
 
-import conversionRate from "./ConversionRate.js"
+import conversionRate from "../modules/ConversionRates.js"
 
 const APIUrl = "https://buff.163.com/api/market/goods"
 
