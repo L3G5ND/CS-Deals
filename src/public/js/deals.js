@@ -16,7 +16,7 @@ $(document).ready(async function() {
     }
     const cache = await $.ajax({
         type: 'GET',
-        url: 'api/deals-cache?market='+market
+        url: 'api/deal-cache?market='+market
     })
     console.log(cache)
     for (let i = 0; i < Object.keys(cache).length; i++) {

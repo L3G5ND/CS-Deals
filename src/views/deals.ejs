@@ -2,139 +2,22 @@
 <html>
     <head>
         <title>Deals | CSGO Utility</title>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <%- include('partials/head') %>
+        <%- include('partials/styles') %>
         <script src="./js/jquery-3.6.4.min.js"></script>
         <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
         <script src="./js/navigation-bar.js"></script>
-        <script src="./js/item-container.js"></script>
-        <script src="./js/deals.js"></script>
-        <link rel="stylesheet" type="text/css" href="./css/reset.css"/>
-        <link rel="stylesheet" type="text/css" href="./css/main.css"/>
         <link rel="stylesheet" type="text/css" href="./css/navigation-bar.css"/>
+        <script src="./js/item-container.js"></script>
         <link rel="stylesheet" type="text/css" href="./css/item-container.css"/>
-        <style>
-            #config-bar {
-                position: fixed;
-                width: 360px;
-                height: calc(100% - 58px);
-                background-color: rgb(31, 31, 31);
-            }
-            
-            .deal-percentage-container {
-                margin-top: 10px;
-            }
-
-            .deal-percentage-text {
-                color: rgb(175, 175, 175);
-                font-size: 1.6rem;
-                display: block;
-                width: 100%;
-                text-align: center;
-            }
-
-            .slider-container {
-                margin-top: 15px;
-                width: 100%;
-                height: 40px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .slider-value-container {
-                height: 40px;
-                width: 27%;
-                background-color: rgb(17, 17, 17);
-                border-style: solid;
-                border-radius: 3px;
-                border-width: 1px;
-                border-color: rgb(88, 88, 88);
-            }
-
-            #slider-value {
-                padding: 0;
-                background: none;
-                border: none;
-                border-radius: 0;
-                outline: none;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                width: 35%;
-                color: white;
-                background: transparent;
-
-                margin-left: 14px;
-                font-size: 1.7rem;
-                height: 100%;
-                
-            }
-
-            .slider-value-percentage {
-                height: 100%;
-                margin-left: 5px;
-                color: white;
-                font-size: 1.8rem;
-            }
-
-            .slider-container #slider {
-                margin-top: 4px;
-                margin-bottom: 4px;
-                margin-right: 16px;
-                -webkit-appearance: none;
-                width: 60%;
-                height: 7px;
-                border-radius: 5px;
-                background: linear-gradient(90deg, rgb(0, 133, 0) 50%, rgb(49, 49, 49) 50%);
-                outline: none;
-            }
-
-            .slider-container #slider::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                width: 15px;
-                height: 15px;
-                border-radius: 50%;
-                background-color: green;
-            }
-        </style>
-        <script>
-            $(document).ready(() => {
-                const slider = document.getElementById('slider')
-                const sliderValue = document.getElementById('slider-value')
-                function magnitude(n1, n2) {
-                    return Math.abs(n1 - n2)
-                }
-                sliderValue.value = slider.value
-                slider.oninput = () => {
-                    const sliderPercentage = magnitude(slider.min, slider.value) / magnitude(slider.min, slider.max) * 100
-                    slider.style.background = 'linear-gradient(90deg, rgb(0, 133, 0) '+sliderPercentage+'%, rgb(49, 49, 49) '+sliderPercentage+'%)'
-                    sliderValue.value = slider.value
-                }
-                sliderValue.oninput = () => {
-                    const sliderPercentage = magnitude(slider.min, sliderValue.value) / magnitude(slider.min, slider.max) * 100
-                    slider.style.background = 'linear-gradient(90deg, rgb(0, 133, 0) '+sliderPercentage+'%, rgb(49, 49, 49) '+sliderPercentage+'%)'
-                    slider.value = sliderValue.value
-                }
-            })
-        </script>
+        <script src="./js/item-config-side-bar.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/item-config-side-bar.css">
+        <script src="./js/deals.js"></script>
     </head>
     <body>
         <div class="background"></div>
-        <div id="navigation-bar"></div>
-        <div id="config-bar">
-            <div class="deal-percentage-container">
-                <span class="deal-percentage-text">Deal Percentage</span>
-                <div class="slider-container">
-                    <input id="slider" type="range" min="-100" max="100" value="0">
-                    <div class="slider-value-container">
-                        <input id="slider-value" type="number">
-                        <span class="slider-value-percentage">%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <%- include('partials/navigation-bar') %> 
+        <%- include('partials/item-config-side-bar') %>
         <div id="item-container"></div>
     </body>
 </html>

@@ -8,7 +8,7 @@ const settings = {
 
     debug: {
         logLevel: 'debug',
-        itemImages: false,
+        itemImages: true,
     },
 
     secret: {
@@ -17,7 +17,7 @@ const settings = {
     },
 
     database: {
-        maxCache: 800,
+        maxItemCache: 800,
     },
 
     scripts: {

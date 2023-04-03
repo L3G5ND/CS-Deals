@@ -2,22 +2,22 @@
 <html>
     <head>
         <title>Activity | CSGO Utility</title>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <%- include('partials/head') %>
+        <%- include('partials/styles') %>
         <script src="./js/jquery-3.6.4.min.js"></script>
         <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
         <script src="./js/navigation-bar.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/navigation-bar.css"/>
         <script src="./js/item-container.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/item-container.css"/>
+        <script src="./js/item-config-side-bar.js"></script>
+        <link rel="stylesheet" type="text/css" href="./css/item-config-side-bar.css">
         <script src="./js/activity.js"></script>
-        <link rel="stylesheet" type="text/css" href="./css/reset.css" /> 
-        <link rel="stylesheet" type="text/css" href="./css/main.css" /> 
-        <link rel="stylesheet" type="text/css" href="./css/navigation-bar.css" /> 
-        <link rel="stylesheet" type="text/css" href="./css/item-container.css" /> 
     </head>
     <body>
         <div class="background"></div>
-        <div id="navigation-bar"></div>
+        <%- include('partials/navigation-bar') %> 
+        <%- include('partials/item-config-side-bar') %>
         <div id="item-container"></div>        
     </body>
 </html>

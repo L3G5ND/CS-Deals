@@ -9,8 +9,9 @@ async function addCache(data) {
 
     const sortedCache = await cacheModel.find({}).sort({createdAt: 'descending'})
     const deletedIds = []
-    if (sortedCache.length >= settings.maxCache) {
-        for (let i = settings.maxCache-1; i < sortedCache.length; i++) {
+    const cacheLength = Object.keys(sortedCache).length
+    if (cacheLength >= settings.database.maxItemCache) {
+        for (let i = settings.database.maxItemCache-1; i < cacheLength; i++) {
             deletedIds.push(sortedCache[i].id)
         }
     }

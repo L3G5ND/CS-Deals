@@ -18,5 +18,9 @@ export default async function(app) {
         app.use('/'+route.path, route.router)
     }
 
+    app.use((req, res) => {
+        res.render('404')
+    })
+
     logger.info('Routes successfully connected')
 }
