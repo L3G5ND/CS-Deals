@@ -40,10 +40,20 @@ function abbreviationToFloat(float) {
     }
 }
 
+function getDeal(item) {
+    let itemDealPercentage
+    if (item.estimatedValue > item.price) {
+        itemDealPercentage = ((item.estimatedValue/item.price)-1)*100
+    } else {
+        itemDealPercentage = -((item.price/item.estimatedValue)-1)*100
+    }
+    return itemDealPercentage
+}
+
 let itemCardCount = 0
 let itemCardHTML
 
-function createCard(itemInfo) {
+function createCard(item) {
     itemCardCount += 1
     const index = itemCardCount
     
@@ -61,83 +71,77 @@ function createCard(itemInfo) {
     itemCard = $(itemCardHTML)
     itemCard.css('order', -index)
 
-    itemCard.find('.item-card-price').text('$'+itemInfo.price.toFixed(2))
+    itemCard.find('.item-card-price').text('$'+item.price.toFixed(2))
 
-    const dealLerpNum = (((itemInfo.buffInfo.buy/itemInfo.price)-1)*100 + 100) / 2
+    const dealLerpNum = (((item.estimatedValue/item.price)-1)*100 + 100) / 2
     const dealR = (255 * (100 - dealLerpNum)) / 100
     const dealG = (255 * dealLerpNum) / 100
     const dealB = 0
-    let dealPercentage
-    if (itemInfo.buffInfo.buy > itemInfo.price) {
-        dealPercentage = ((itemInfo.buffInfo.buy/itemInfo.price)-1)*100
-    } else {
-        dealPercentage = -((itemInfo.price/itemInfo.buffInfo.buy)-1)*100
-    }
-    itemCard.find('.item-card-deal').text(Math.floor(dealPercentage)+'%')
+    itemCard.find('.item-card-deal').text(Math.floor(getDeal(item))+'%')
     itemCard.find('.item-card-deal').css('color', 'rgb('+dealR+', '+dealG+', '+dealB+')')
 
-    itemCard.find('.item-card-image').attr('src', itemInfo.image)
+    itemCard.find('.item-card-image').attr('src', item.image)
 
-    if (itemInfo.stickerType) {
-        itemCard.find('.item-card-type').text('(' + itemInfo.stickerType + ') ' + itemInfo.itemType)
-    } else if (itemInfo.tag) {
-        itemCard.find('.item-card-type').css('color', getTagColor(itemInfo.tag))
-        itemCard.find('.item-card-type').text(itemInfo.tag + ' ' + itemInfo.itemType)
+    if (item.stickerType) {
+        itemCard.find('.item-card-type').text('(' + item.stickerType + ') ' + item.itemType)
+    } else if (item.tag) {
+        itemCard.find('.item-card-type').css('color', getTagColor(item.tag))
+        itemCard.find('.item-card-type').text(item.tag + ' ' + item.itemType)
     } else {
-        itemCard.find('.item-card-type').text(itemInfo.itemType)
+        itemCard.find('.item-card-type').text(item.itemType)
     }
 
     itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100%)')
 
     itemCard.find('.item-card-copy-name-to-clipboard').click(function() {
-        navigator.clipboard.writeText(itemInfo.hashName)
+        navigator.clipboard.writeText(item.hashName)
     })
 
-    if (itemInfo.buffInfo.buy >= 100000) {
-        itemCard.find('.item-card-buff-price').text('$'+itemInfo.buffInfo.buy)
+    if (item.buffInfo.buy >= 100000) {
+        itemCard.find('.item-card-buff-price').text('$'+item.buffInfo.buy)
     } else {
-        itemCard.find('.item-card-buff-price').text('$'+itemInfo.buffInfo.buy.toFixed(2))
+        itemCard.find('.item-card-buff-price').text('$'+item.buffInfo.buy.toFixed(2))
     }
 
-    itemCard.find('.item-card-steam-link').attr('href', itemInfo.steamLink)
-    if (itemInfo.steamValue >= 100000) {
-        itemCard.find('.item-card-steam-price').text('$'+itemInfo.steamValue)
+    itemCard.find('.item-card-steam-link').attr('href', item.steamLink)
+    if (item.steamValue >= 100000) {
+        itemCard.find('.item-card-steam-price').text('$'+item.steamValue)
     } else {
-        itemCard.find('.item-card-steam-price').text('$'+itemInfo.steamValue.toFixed(2))
+        itemCard.find('.item-card-steam-price').text('$'+item.steamValue.toFixed(2))
     }
 
-    itemCard.find('.item-card-price-empire-link').attr('href', itemInfo.priceEmpireLink)
-    itemCard.find('.item-card-buy-page-button').attr('href', itemInfo.itemLink)
+    itemCard.find('.item-card-price-empire-link').attr('href', item.priceEmpireLink)
+    itemCard.find('.item-card-buy-page-button').attr('href', item.itemLink)
 
     itemCard.find('.item-card-buy-button').click(function() {
-        window.open(itemInfo.itemLink, '_blank')
+        window.open(item.itemLink, '_blank')
     })
 
-    if (itemInfo.category == 'Weapon' || itemInfo.category == 'Gloves') {
-        if (typeof(itemInfo.float) == 'string') {
-            itemCard.find('.item-card-float-abbreviation').text(itemInfo.float)
+    if (item.category == 'Weapon' || item.category == 'Gloves') {
+        if (typeof(item.float) == 'string') {
+            itemCard.find('.item-card-float-abbreviation').text(item.float)
             itemCard.find('.item-card-float').text('???')
-            itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100% - '+abbreviationToFloat(itemInfo.float)*100+'%)')
-        } else if (typeof(itemInfo.float) == 'number') {
-            itemCard.find('.item-card-float-abbreviation').text(floatToAbbreviation(itemInfo.float))
-            itemCard.find('.item-card-float').text(itemInfo.float.toFixed(7))
-            itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100% - '+itemInfo.float*100+'%)')
+            itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100% - '+abbreviationToFloat(item.float)*100+'%)')
+        } else if (typeof(item.float) == 'number') {
+            itemCard.find('.item-card-float-abbreviation').text(floatToAbbreviation(item.float))
+            itemCard.find('.item-card-float').text(item.float.toFixed(7))
+            itemCard.find('.item-card-float-bar-cover').css('width', 'calc(100% - '+item.float*100+'%)')
         }
-        itemCard.find('.item-card-name').text(itemInfo.name)
-    } else if (itemInfo.category == 'Sticker' || itemInfo.category == 'Graffiti' || itemInfo.category == 'Patch') {
-        if (itemInfo.stickerType) {
-            itemCard.find('.item-card-float-abbreviation').text(itemInfo.stickerType)
+        itemCard.find('.item-card-name').text(item.name)
+    } else if (item.category == 'Sticker' || item.category == 'Graffiti' || item.category == 'Patch') {
+        if (item.stickerType) {
+            itemCard.find('.item-card-float-abbreviation').text(item.stickerType)
         }
-        if (itemInfo.event) {
-            itemCard.find('.item-card-name').text(itemInfo.name + ' | ' + itemInfo.event)
+        if (item.event) {
+            itemCard.find('.item-card-name').text(item.name + ' | ' + item.event)
         } else {
-            itemCard.find('.item-card-name').text(itemInfo.name)
+            itemCard.find('.item-card-name').text(item.name)
         }
     } else {
-        itemCard.find('.item-card-name').text(itemInfo.name)
+        itemCard.find('.item-card-name').text(item.name)
     }
     
-    $('#item-container').append(itemCard)
+    $('#item-grid').append(itemCard)
 }
 
 const itemContainer = {

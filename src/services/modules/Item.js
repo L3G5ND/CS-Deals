@@ -25,9 +25,9 @@ const priceEmpirePaths = {
     'Character': 'agent'
 }
 
-async function addExtraInfo(info) {
-    const itemPrices = await Prices.getPrices(info.hashName)
-    info.buffInfo = {
+async function addExtraInfo(item) {
+    const itemPrices = await Prices.getPrices(item.hashName)
+    item.buffInfo = {
         buy: 0, 
         sell: 0, 
     }
@@ -36,30 +36,40 @@ async function addExtraInfo(info) {
         if (buffPrices.starting_at || buffPrices.highest_order) {
             const buffBuy = buffPrices.starting_at.price
             const buffSell = buffPrices.highest_order.price
-            info.buffInfo = {
+            item.buffInfo = {
                 buy: buffBuy ? buffBuy : 0, 
                 sell: buffSell ? buffSell : 0, 
             }
         }
     }
 
-    info.steamValue = itemPrices.steam.last_7d ? itemPrices.steam.last_7d : 0
-    info.steamLink = 'https://steamcommunity.com/market/listings/730/'+info.hashName
+    item.steamValue = itemPrices.steam.last_7d ? itemPrices.steam.last_7d : 0
+    item.steamLink = 'https://steamcommunity.com/market/listings/730/'+item.hashName
+
+    if (item.buffInfo.buy > item.steamValue) {
+        item.estimatedValue = item.steamValue
+    } else {
+        item.estimatedValue = item.buffInfo.buy
+    }
+    if (item.steamValue <= 0) {
+        item.estimatedValue = item.buffInfo.buy
+    }
 
     let path = ''
     for (const key in priceEmpirePaths) {
-        if (info.category == key) {
+        if (item.category == key) {
             path = priceEmpirePaths[key]
         }
     }
-    info.priceEmpireLink = 'https://pricempire.com/item/csgo/'+path+'/'+ItemNameParser.getLinkName(info.hashName)
+    item.priceEmpireLink = 'https://pricempire.com/item/csgo/'+path+'/'+ItemNameParser.getLinkName(item.hashName)
 }
 
 export default {
+
     createItem: async function(data) {
         const hashName = data.name
 
-        let info = {
+        let item = {
             category: ItemNameParser.getItemCategory(hashName),
             name: ItemNameParser.getItemName(hashName),
             tag: ItemNameParser.getItemTag(hashName),
@@ -72,39 +82,37 @@ export default {
             float: data.float,
             phase: data.phase,
             itemLink: data.link,
+            estimatedValue: 0,
             buffInfo: null,
             steamValue: null,
             steamLink: null,
             priceEmpireLink: null,
         }
 
-        if (info.category == 'Weapon' || info.category == 'Gloves') {
-            if (!info.float) {
-                info.float = ItemNameParser.getWeaponQuality(hashName)
+        if (item.category == 'Weapon' || item.category == 'Gloves') {
+            if (!item.float) {
+                item.float = ItemNameParser.getWeaponQuality(hashName)
             }
         }
 
         ItemCache.addCache({
             market: data.market,
-            info: info
+            item: item
         })
+         
+        await addExtraInfo(item)
 
-        await addExtraInfo(info)
-
-        let dealPercentage = 0
-        let itemDealPercentage
-        if (info.buffInfo.buy > info.price) {
-            itemDealPercentage = ((info.buffInfo.buy/info.price)-1)*100
-        } else {
-            itemDealPercentage = -((info.price/info.buffInfo.buy)-1)*100
-        }
-        if (itemDealPercentage >= dealPercentage) {
-            ItemWebsocket.addDeal(info)
+        if (this.getItemDeal(item) >= 0) {
+            ItemCache.addDealCache({
+                market: data.market,
+                item: item
+            })
+            ItemWebsocket.addDeal(item)
         }
 
-        ItemWebsocket.addItem(info)
+        ItemWebsocket.addItem(item)
 
-        return info
+        return item
     },
 
     getItems: async function(market) {
@@ -113,5 +121,24 @@ export default {
             await addExtraInfo(cache[i])
         }
         return cache
+    },
+
+    getDeals: async function(market) {
+        const cache = await ItemCache.getDealCache(market)
+        for (let i = 0; i < Object.keys(cache).length; i++) {
+            await addExtraInfo(cache[i])
+        }
+        return cache
+    },
+
+    getItemDeal(item) {
+        let itemDealPercentage
+        if (item.estimatedValue.buy > item.price) {
+            itemDealPercentage = ((item.estimatedValue/item.price)-1)*100
+        } else {
+            itemDealPercentage = -((item.price/item.estimatedValue)-1)*100
+        }
+        return itemDealPercentage
     }
+
 }

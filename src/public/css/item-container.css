@@ -1,12 +1,28 @@
-#item-container {
-    width: calc(100% - 360px - 40px);
+.item-container {
     margin: 20px;
     margin-left: calc(360px + 20px);
+    margin-right: 10px;
+    width: calc(100% - 360px - 30px);
+    height: calc(100% - 58px - 40px);
+    overflow-anchor: none;
+    overflow-y: scroll;
+}
+
+#item-grid {
+    width: calc(100% - 10px);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
     grid-auto-rows: 40rem;
     grid-gap: 9px;
-    overflow-anchor: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(43, 43, 43);
 }
 
 @media screen and (max-width: 400px) {
@@ -22,7 +38,6 @@
 
 .item-card-price-container {
     display: flex;
-
     height: 3rem;
 }
 

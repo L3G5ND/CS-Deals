@@ -2,7 +2,8 @@ import ItemCache from "../../models/ItemCache.js"
 import settings from '../../settings.js'
 
 async function addCache(data) {
-    const cacheModel = ItemCache[Object.keys(ItemCache).find((key) => key.toLowerCase() === data.market.toLowerCase())]
+    const itemCacheModels = ItemCache[data.type]
+    const cacheModel = itemCacheModels[Object.keys(itemCacheModels).find((key) => key.toLowerCase() === data.market.toLowerCase())]
     if (!cacheModel) {
         return false
     }
@@ -19,14 +20,15 @@ async function addCache(data) {
         await cacheModel.deleteMany({_id: {$in: deletedIds}})
     }
 
-    const cacheDocument = new cacheModel({ info: data.info })
+    const cacheDocument = new cacheModel({ item: data.item })
     await cacheDocument.save()
 
     return true
 }
 
-async function getCache(market) {
-    const cacheModel = ItemCache[Object.keys(ItemCache).find((key) => key.toLowerCase() === market.toLowerCase())]
+async function getCache(data) {
+    const itemCacheModels = ItemCache[data.type]
+    const cacheModel = itemCacheModels[Object.keys(itemCacheModels).find((key) => key.toLowerCase() === data.market.toLowerCase())]
     if (!cacheModel) {
         return false
     }
@@ -35,7 +37,7 @@ async function getCache(market) {
     
     const itemCache = {}
     for (let i = 0; i < sortedCache.length; i++) {
-        itemCache[i] = sortedCache[i].info
+        itemCache[i] = sortedCache[i].item
     }
 
     return itemCache
@@ -44,13 +46,43 @@ async function getCache(market) {
 export default {
 
     addCache: async function(data) {
+        data.type = 'normal'
         const res = await addCache(data)
-        await addCache({ market: 'all', info: data.info })
+        if (data.market != 'all') {
+            await addCache({
+                type: data.type,
+                market: 'all',
+                item: data.item
+            })
+        }
         return res
     },
 
     getCache: async function(market) {
-        return await getCache(market)
+        return await getCache({
+            type: 'normal',
+            market: market
+        })
     },
+
+    addDealCache: async function(data) {
+        data.type = 'deal'
+        const res = await addCache(data)
+        if (data.market != 'all') {
+            await addCache({
+                type: data.type,
+                market: 'all',
+                item: data.item
+            })
+        }
+        return res
+    },
+
+    getDealCache: async function(market) {
+        return await getCache({
+            type: 'deal',
+            market: market
+        })
+    }
     
 }

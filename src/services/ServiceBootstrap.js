@@ -47,6 +47,8 @@ async function scanDirectory(dir, context) {
 }
 
 export default async function(context) {
-    await scanDirectory(null, context)
-    logger.info('Services successfully booted')
+    if (settings.servicesEnabled) {
+        await scanDirectory(null, context)
+        logger.info('Services successfully booted')
+    }
 }
