@@ -3,11 +3,7 @@
     <head>
         <title>Activity | CSGO Utility</title>
         <%- include('partials/head') %>
-        <%- include('partials/styles') %>
-        <script src="./js/jquery-3.6.4.min.js"></script>
         <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
-        <script src="./js/navigation-bar.js"></script>
-        <link rel="stylesheet" type="text/css" href="./css/navigation-bar.css"/>
         <script src="./js/item-container.js"></script>
         <link rel="stylesheet" type="text/css" href="./css/item-container.css"/>
         <script src="./js/item-config-side-bar.js"></script>
@@ -18,6 +14,8 @@
         <div class="background"></div>
         <%- include('partials/navigation-bar') %> 
         <%- include('partials/item-config-side-bar') %>
-        <div id="item-container"></div>        
+        <div class="item-container">
+            <div id="item-grid"></div>
+        </div>    
     </body>
 </html>

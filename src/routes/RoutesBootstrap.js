@@ -20,6 +20,7 @@ export default async function(app) {
 
     app.use((req, res) => {
         res.render('404')
+        return
     })
 
     logger.info('Routes successfully connected')

@@ -60,13 +60,24 @@
 }
 
 .right-nav {
+    margin-left: auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-left: auto;
+}
+
+#auth-button {
+    cursor: pointer;
+    order: 1;
+    padding-right: 20px;
+    color:rgb(146, 146, 146);
+}
+
+#auth-button:hover {
+    color:rgb(238, 238, 238);
 }
 
 #profile-button {
+    order: 2;
     display: flex;
     align-items: center;
     justify-content: center;

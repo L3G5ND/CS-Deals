@@ -55,6 +55,7 @@ class TaskScheduler {
         data = data || {}
         this.maxTasks = data.maxTasks || 1
         this.taskDelay = data.taskDelay || 0
+        this.taskCount = 0
         this._runningTasks = []
         this._pendingTasks = []
     }
@@ -73,6 +74,8 @@ class TaskScheduler {
             if (runningTaskIndex > -1) {
                 this._runningTasks.splice(runningTaskIndex, 1)
             }
+            
+            this.taskCount -= 1
 
             if (this._pendingTasks.length >= 1) {
                 this._executeTask(this._pendingTasks[0])
@@ -83,11 +86,13 @@ class TaskScheduler {
     async addTask(task, ...params) {
         task = new Task(task, params)
 
+        this.taskCount += 1
+
         if (this._runningTasks.length >= this.maxTasks) {
             this._pendingTasks.push(task)
         } else {
             this._executeTask(task)
-        } 
+        }
 
         return task
     }

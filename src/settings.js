@@ -8,8 +8,9 @@ const settings = {
 
     debug: {
         logLevel: 'debug',
-        servicesEnabled: false,
-        itemImages: false,
+        viewDebug: true,
+        servicesEnabled: true,
+        itemImages: true,
     },
 
     secret: {
@@ -29,8 +30,31 @@ const settings = {
     markets: {
         'All': true,
         'Waxpeer': true,
+    },
+
+    tierInfo: {
+        Tier0: {
+            maxDeals: -Number.MAX_SAFE_INTEGER,
+        },
+        Tier1: {
+            maxDeals: 20,
+        },
+        Tier2: {
+            maxDeals: 40,
+        },
+        Tier3: {
+            maxDeals: Number.MAX_SAFE_INTEGER,
+        },
     }
 
+}
+
+settings.tiers = Object.keys(settings.tierInfo)
+settings.defaultTier = settings.tiers[0]
+
+if (settings.debug.viewDebug) {
+    settings.debug.servicesEnabled = false
+    settings.debug.itemImages = false
 }
 
 export default settings

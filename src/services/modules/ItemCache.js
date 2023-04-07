@@ -1,5 +1,8 @@
 import ItemCache from "../../models/ItemCache.js"
 import settings from '../../settings.js'
+import TaskScheduler from "./TaskScheduler.js"
+
+const ItemCacheTaskScheduler = new TaskScheduler({maxTasks: 10})
 
 async function addCache(data) {
     const itemCacheModels = ItemCache[data.type]
@@ -43,19 +46,22 @@ async function getCache(data) {
     return itemCache
 }
 
+async function _addCache(data) {
+    await addCache(data)
+    if (data.market != 'all') {
+        await addCache({
+            type: data.type,
+            market: 'all',
+            item: data.item
+        })
+    }
+}
+
 export default {
 
     addCache: async function(data) {
         data.type = 'normal'
-        const res = await addCache(data)
-        if (data.market != 'all') {
-            await addCache({
-                type: data.type,
-                market: 'all',
-                item: data.item
-            })
-        }
-        return res
+        ItemCacheTaskScheduler.addTask(_addCache, data)
     },
 
     getCache: async function(market) {
@@ -67,15 +73,7 @@ export default {
 
     addDealCache: async function(data) {
         data.type = 'deal'
-        const res = await addCache(data)
-        if (data.market != 'all') {
-            await addCache({
-                type: data.type,
-                market: 'all',
-                item: data.item
-            })
-        }
-        return res
+        ItemCacheTaskScheduler.addTask(_addCache, data)
     },
 
     getDealCache: async function(market) {

@@ -1,12 +1,12 @@
 import express from 'express'
 
-import apiControllers from '../controllers/api.js'
+import apiController from '../controllers/api.js'
 
 const router = express.Router()
 
-router.get('/item-cache', apiControllers.itemCache)
+router.get('/item-cache', apiController.itemCache)
 
-router.get('/deal-cache', apiControllers.dealCache)
+router.get('/deal-cache', apiController.dealCache)
 
 export default {
     router: router,
