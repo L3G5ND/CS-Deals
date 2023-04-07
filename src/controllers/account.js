@@ -79,8 +79,7 @@ export default {
             return
         }
         const user = await UserModule.findOne({
-            email: email,
-            password: password
+            email: email
         })
         if (!user) {
             res.status(401)
@@ -179,7 +178,7 @@ export default {
             })
             return
         }
-        
+
         res.json({
             success: true,
             data: {

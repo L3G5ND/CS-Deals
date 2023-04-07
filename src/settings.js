@@ -8,7 +8,7 @@ const settings = {
 
     debug: {
         logLevel: 'debug',
-        viewDebug: true,
+        viewDebug: false,
         servicesEnabled: true,
         itemImages: true,
     },
@@ -51,6 +51,9 @@ const settings = {
 
 settings.tiers = Object.keys(settings.tierInfo)
 settings.defaultTier = settings.tiers[0]
+settings.defualtUser = {
+    Tier: settings.defaultTier
+}
 
 if (settings.debug.viewDebug) {
     settings.debug.servicesEnabled = false
