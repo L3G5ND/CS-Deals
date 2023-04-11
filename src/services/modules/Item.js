@@ -77,16 +77,17 @@ export default {
             stickerType: ItemNameParser.getStickerType(hashName),
             event: ItemNameParser.getEvent(hashName),
             image: ItemNameParser.getImage(hashName),
+            phase: ItemNameParser.getWeaponPhase(hashName),
             hashName: hashName,
             price: data.price,
             float: data.float,
-            phase: data.phase,
             itemLink: data.link,
             estimatedValue: 0,
             buffInfo: null,
             steamValue: null,
             steamLink: null,
             priceEmpireLink: null,
+            market: data.market,
         }
 
         if (item.category == 'Weapon' || item.category == 'Gloves') {

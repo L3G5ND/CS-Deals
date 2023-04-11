@@ -25,25 +25,31 @@ const settings = {
     scripts: {
         "ItemWebsocket": true,
         "Waxpeer": true,
+        "Skinport": true,
     },
 
     markets: {
         'All': true,
         'Waxpeer': true,
+        'Skinport': true,
     },
 
     tierInfo: {
         Tier0: {
             maxDeals: -Number.MAX_SAFE_INTEGER,
+            maxPrice: 0
         },
         Tier1: {
             maxDeals: 20,
+            maxPrice: 20
         },
         Tier2: {
             maxDeals: 40,
+            maxPrice: 100
         },
         Tier3: {
             maxDeals: Number.MAX_SAFE_INTEGER,
+            maxPrice: Number.MAX_SAFE_INTEGER,
         },
     }
 
@@ -52,7 +58,7 @@ const settings = {
 settings.tiers = Object.keys(settings.tierInfo)
 settings.defaultTier = settings.tiers[0]
 settings.defualtUser = {
-    Tier: settings.defaultTier
+    tier: settings.defaultTier
 }
 
 if (settings.debug.viewDebug) {

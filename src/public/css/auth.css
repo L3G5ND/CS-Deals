@@ -130,7 +130,6 @@
 }
 
 .auth-error span {
-    cursor: pointer;
     display: block;
     color: rgb(180, 21, 21);
     font-size: 1.6rem;

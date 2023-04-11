@@ -15,7 +15,6 @@ async function onItemAdded(item) {
         name: item.name,
         price: item.price/1000,
         float: null,
-        phase: null,
         link: 'https://waxpeer.com/'+ItemNameParser.getLinkName(item.name)+'/item/'+item.item_id,
     })
 }

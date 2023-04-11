@@ -10,6 +10,8 @@ import RoutesBootstrap from './routes/RoutesBootstrap.js'
 import ServiceBootstrap from './services/ServiceBootstrap.js'
 import AuthMiddleware from './middleware/auth.js'
 
+import ItemNameParser from './services/modules/ItemNameParser.js'
+
 try {
     await mongoose.connect(settings.secret.mongodbUrl)
     logger.info('Mongoose successfully connected')

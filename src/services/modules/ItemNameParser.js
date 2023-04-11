@@ -201,6 +201,14 @@ function getWeaponQuality(hashName) {
     return null
 }
 
+function getWeaponPhase(hashName) {
+    const itemCategory = getItemCategory(hashName)
+    if (itemCategory == 'Weapon' || itemCategory == 'Gloves') {
+        return hashName.substring(hashName.indexOf(') - ')+4)
+    }
+    return null
+}
+
 function getEvent(hashName) {
     const itemCategory = getItemCategory(hashName)
     if (itemCategory == 'Sticker' || itemCategory == 'Graffiti' || itemCategory == 'Patch') {
@@ -230,5 +238,6 @@ export default {
     getImage: getImage,
     getStickerType: getStickerType,
     getWeaponQuality: getWeaponQuality,
+    getWeaponPhase: getWeaponPhase,
     getEvent: getEvent,
 }
