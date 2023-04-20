@@ -50,6 +50,19 @@ function getDeal(item) {
     return itemDealPercentage
 }
 
+const marketToImage = {
+    waxpeer: '../images/marketIcons/waxpeer.png',
+    skinport: '../images/marketIcons/skinport.png',
+}
+
+function getMarketImage(market) {
+    for (const key in marketToImage) {
+        if (market.toLowerCase() == key.toLowerCase()) {
+            return marketToImage[key]
+        }
+    }
+}
+
 let itemCardCount = 0
 let itemCardHTML
 
@@ -79,6 +92,10 @@ function createCard(item) {
     const dealB = 0
     itemCard.find('.item-card-deal').text(Math.floor(getDeal(item))+'%')
     itemCard.find('.item-card-deal').css('color', 'rgb('+dealR+', '+dealG+', '+dealB+')')
+
+    if (item.market) {
+        itemCard.find('.item-card-market-image').attr('src', getMarketImage(item.market))
+    }
 
     itemCard.find('.item-card-image').attr('src', item.image)
 

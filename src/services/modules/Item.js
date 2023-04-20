@@ -134,7 +134,7 @@ export default {
 
     getItemDeal(item) {
         let itemDealPercentage
-        if (item.estimatedValue.buy > item.price) {
+        if (item.estimatedValue > item.price) {
             itemDealPercentage = ((item.estimatedValue/item.price)-1)*100
         } else {
             itemDealPercentage = -((item.price/item.estimatedValue)-1)*100
